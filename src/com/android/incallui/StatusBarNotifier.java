@@ -28,6 +28,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.mokee.location.PhoneLocation;
+import android.mokee.utils.MoKeeUtils;
 import android.os.Handler;
 import android.os.Message;
 import android.telecom.PhoneAccount;
@@ -404,12 +406,23 @@ public class StatusBarNotifier implements InCallPresenter.InCallStateListener {
                 && !call.can(android.telecom.Call.Details.CAPABILITY_GENERIC_CONFERENCE)) {
             return mContext.getResources().getString(R.string.card_title_conf_call);
         }
-        if (TextUtils.isEmpty(contactInfo.name)) {
-            return TextUtils.isEmpty(contactInfo.number) ? null
+        if (MoKeeUtils.isSupportLanguage(true)) {
+            CharSequence location = PhoneLocation.getCityFromPhone(contactInfo.number);
+            if (TextUtils.isEmpty(contactInfo.name)) {
+                if (!TextUtils.isEmpty(location)) {
+                    return contactInfo.number + " " + location;
+                }
+                return contactInfo.number;
+            }
+            return !TextUtils.isEmpty(location) ? contactInfo.name + " " + location : contactInfo.name;
+        } else {
+            if (TextUtils.isEmpty(contactInfo.name)) {
+            	return TextUtils.isEmpty(contactInfo.number) ? null
                     : BidiFormatter.getInstance().unicodeWrap(
                             contactInfo.number.toString(), TextDirectionHeuristics.LTR);
+            }
+            return contactInfo.name;
         }
-        return contactInfo.name;
     }
 
     private void addPersonReference(Notification.Builder builder, ContactCacheEntry contactInfo,
