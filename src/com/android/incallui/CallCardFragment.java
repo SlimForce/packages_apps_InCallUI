@@ -977,7 +977,8 @@ public class CallCardFragment extends BaseFragment<CallCardPresenter, CallCardPr
     public void updateColors() {
         MaterialPalette themeColors = InCallPresenter.getInstance().getThemeColors();
 
-        if (mCurrentThemeColors != null && mCurrentThemeColors.equals(themeColors)) {
+        if (themeColors == null || // THEME fix not to give FCs TempFix.
+                (mCurrentThemeColors != null && mCurrentThemeColors.equals(themeColors)) ) {
             return;
         }
 
