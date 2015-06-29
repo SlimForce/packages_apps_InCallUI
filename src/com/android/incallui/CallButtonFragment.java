@@ -157,11 +157,10 @@ public class CallButtonFragment
 
     @Override
     public void onResume() {
+        super.onResume(); //Super class call first and then remaining logic
         if (getPresenter() != null) {
             getPresenter().refreshMuteState();
         }
-        super.onResume();
-
         updateColors();
     }
 
@@ -239,13 +238,14 @@ public class CallButtonFragment
     }
 
     public void updateColors() {
+        Resources res = getActivity().getResources();
         MaterialPalette themeColors = InCallPresenter.getInstance().getThemeColors();
 
-        if (mCurrentThemeColors != null && mCurrentThemeColors.equals(themeColors)) {
+        if (themeColors == null || // THEME fix not to give FCs TempFix.
+                res == null || (mCurrentThemeColors != null && mCurrentThemeColors.equals(themeColors))) {
             return;
         }
 
-        Resources res = getActivity().getResources();
         View[] compoundButtons = {
                 mAudioButton,
                 mMuteButton,
